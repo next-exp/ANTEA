@@ -5,7 +5,7 @@ from invisible_cities.reco import wfm_functions    as wfm
 from invisible_cities.reco import sensor_functions as sf
 
 
-def simulate_sipm_response(tot_charges, sipm_adc_to_pes, pe_resolution):
+def simulate_sipm_response(tot_charges, pe_resolution):
     """ Return total signal in adc counts with the fluctuation of the pe.
 
     Parameters
@@ -25,6 +25,5 @@ def simulate_sipm_response(tot_charges, sipm_adc_to_pes, pe_resolution):
 
     ## Fluctuate according to charge resolution
     sipm_fl    = sf.charge_fluctuation(tot_charges, pe_resolution)
-    charge_adc = sipm_fl * sipm_adc_to_pes
-    return charge_adc
+    return sipm_fl
 
