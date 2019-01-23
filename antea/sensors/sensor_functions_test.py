@@ -11,7 +11,8 @@ def test_simulate_sipm_response(ANTEADATADIR):
 
     PATH_IN       = os.path.join(ANTEADATADIR, 'full_ring_test.pet.h5')
     h5in          = tb.open_file(PATH_IN, 'r')
-    single_pe_rms = 1.67748
+    adc_to_pes    = 17.25555 #adcs
+    single_pe_rms = 1.67748 / adc_to_pes
     info_dict     = read_mcinfo(h5in)
     wvf_dict      = read_mcsns_response(PATH_IN)
     sns_dict      = list(wvf_dict.values())[0]
