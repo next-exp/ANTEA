@@ -13,9 +13,12 @@ def find_hits_of_given_particles(p_ids: Sequence[int], hits: pd.DataFrame) -> pd
     return hits[hits.particle_id.isin(p_ids)]
 
 
-def select_photoelectric(evt_parts: pd.DataFrame, evt_hits: pd.DataFrame) -> Tuple[bool, Sequence[Tuple[float, float, float]]]:
+def select_photoelectric(evt_parts: pd.DataFrame,
+                         evt_hits:  pd.DataFrame,
+                         every_single: bool = False) -> Tuple[bool, Sequence[Tuple[float, float, float]]]:
     """
     Select only the events where one or two photoelectric events occur, and nothing else.
+    if every_single == True returns every single photoelectric too.
     """
     sel_volume   = (evt_parts.initial_volume == 'ACTIVE') & (evt_parts.final_volume == 'ACTIVE')
     sel_name     =  evt_parts.particle_name == 'e-'
@@ -44,8 +47,10 @@ def select_photoelectric(evt_parts: pd.DataFrame, evt_hits: pd.DataFrame) -> Tup
         hit_positions = np.array([df.x.values, df.y.values, df.z.values]).transpose()
         true_pos.append(np.average(hit_positions, axis=0, weights=df.energy))
 
-    ### Reject events where the two gammas have interacted in the same hemisphere.
-    if (len(true_pos) == 1) & (evt_hits.energy.sum() > 0.511):
-       return (False, [])
+    if not every_single:
+        ### Reject events where the two gammas have interacted in the same hemisphere
+        ### in order to return only single phot and nothing else.
+        if (len(true_pos) == 1) & (evt_hits.energy.sum() > 0.511):
+           return (False, [])
 
     return (True, true_pos)
