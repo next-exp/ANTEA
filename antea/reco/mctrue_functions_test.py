@@ -89,3 +89,7 @@ def test_select_photoelectric(ANTEADATADIR):
         elif len(true_pos) == 2:
             assert evt_hits.energy.sum() > 0.511
 
+        select2, true_pos2 = mcf.select_photoelectric(evt_parts, evt_hits, every_single=True)
+        if len(true_pos2) == 1 and evt_hits.energy.sum() > 0.511:
+            assert select2 == True
+
