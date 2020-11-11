@@ -51,6 +51,11 @@ def test_convolve_tof(l, s):
         assert np.isclose(np.sum(s), np.sum(conv_res))
 
 
+time_window    = 10000
+time_bin       = 5
+time           = np.arange(0, 80000, time_bin)
+spe_resp, norm = tf.apply_spe_dist(time, tau_sipm)
+
 @mark.parametrize('filename',
                   (('ring_test.h5'),
                    ('full_body_1ev.h5')))
@@ -61,10 +66,6 @@ def test_tdc_convolution(ANTEADATADIR, filename):
     PATH_IN        = os.path.join(ANTEADATADIR, filename)
     tof_response   = load_mcTOFsns_response(PATH_IN)
     events         = tof_response.event_id.unique()
-    time_window    = 10000
-    time_bin       = 5
-    time           = np.arange(0, 80000, time_bin)
-    spe_resp, norm = tf.apply_spe_dist(time, tau_sipm)
     for evt in events:
         evt_tof = tof_response[tof_response.event_id == evt]
         tof_sns = evt_tof.sensor_id.unique()
@@ -95,3 +96,21 @@ def test_translate_charge_conv_to_wf_df(e, s_id, l2):
         assert wf_df.event_id .dtype == 'int32'
         assert wf_df.sensor_id.dtype == 'int32'
         assert wf_df.time_bin .dtype == 'int32'
+
+
+def test_first_bin_is_the_same_after_convolution(ANTEADATADIR):
+    """
+    Checks that after applying the exponential distribution to the tof response,
+    the first bin for each sensor is the same as in the initial tof table.
+    """
+    PATH_IN          = os.path.join(ANTEADATADIR, 'full_body_1ev.h5')
+    tof_response     = load_mcTOFsns_response(PATH_IN)
+    evt              = tof_response.event_id .unique() #The datafile contains only 1 event
+    tof_sns          = tof_response.sensor_id.unique()
+    for s_id in tof_sns:
+        tdc_conv    = tf.tdc_convolution(tof_response, spe_resp, s_id, time_window)
+        tdc_conv_df = tf.translate_charge_conv_to_wf_df(evt, s_id, tdc_conv)
+
+        min_time_bin_conv = tdc_conv_df.time_bin.min()
+        min_time_bin      = tof_response[tof_response.sensor_id == s_id].time_bin.min()
+        assert min_time_bin_conv == min_time_bin
