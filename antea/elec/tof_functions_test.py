@@ -70,7 +70,7 @@ def test_tdc_convolution(ANTEADATADIR, filename):
         evt_tof = tof_response[tof_response.event_id == evt]
         tof_sns = evt_tof.sensor_id.unique()
         for s_id in tof_sns:
-            tdc_conv = tf.tdc_convolution(tof_response, spe_resp, s_id, time_window)
+            tdc_conv = tf.tdc_convolution(evt_tof, spe_resp, s_id, time_window)
             assert len(tdc_conv) == time_window + len(spe_resp)
             if len(tof_response[(tof_response.sensor_id == s_id) &
                             (tof_response.time_bin > time_window)]) == 0:
