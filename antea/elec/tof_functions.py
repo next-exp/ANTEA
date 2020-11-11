@@ -37,14 +37,14 @@ def convolve_tof(spe_response: Sequence[float],
     """
     if not np.count_nonzero(spe_response):
         print('spe_response values are zero')
-        return np.zeros(len(spe_response)+len(signal)-1)
-    conv_first = np.hstack([spe_response, np.zeros(len(signal)-1)])
-    conv_res   = np.zeros(len(signal)+len(spe_response)-1)
+        return np.zeros(len(spe_response)+len(signal))
+    conv_first = np.hstack([spe_response, np.zeros(len(signal))])
+    conv_res   = np.zeros(len(signal)+len(spe_response))
     pe_pos     = np.argwhere(signal > 0)
     pe_recov   = signal[pe_pos]
     for i in range(len(pe_recov)): #Loop over the charges
         conv_first_ch = conv_first*pe_recov[i]
-        desp          = np.roll(conv_first_ch, pe_pos[i])
+        desp          = np.roll(conv_first_ch, pe_pos[i]-1)
         conv_res     += desp
     return conv_res
 
