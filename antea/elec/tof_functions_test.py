@@ -15,7 +15,8 @@ l        = st.lists(st.integers(min_value=1, max_value=10000), min_size=2, max_s
 @given(l)
 def test_apply_spe_dist(l):
     """
-    This test checks that the function apply_spe_dist returns an array with the distribution value for each time.
+    This test checks that the function apply_spe_dist returns an array with the
+    distribution value for each time.
     """
     l = np.array(l)
     exp_dist, norm_dist = tf.apply_spe_dist(np.unique(l), tau_sipm)
@@ -31,7 +32,8 @@ def test_apply_spe_dist(l):
                    (np.array([1,2,3]), np.array([0.01029012, 0.02047717, 0.03056217]))))
 def test_spe_dist(time, time_dist):
     """
-    Spe_dist is an analitic function, so this test takes some values and checks that the function returns the correct value for each one.
+    Spe_dist is an analitic function, so this test takes some values and checks
+    that the function returns the correct value for each one.
     """
     result = tf.spe_dist(time, tau_sipm)
     assert np.all(result) == np.all(time_dist)
@@ -42,7 +44,9 @@ s = st.lists(st.integers(min_value=1, max_value=10000), min_size=2, max_size=100
 @given(l, s)
 def test_convolve_tof(l, s):
     """
-    Check that the function convolve_tof returns an array with the adequate length, and, in case the array is not empty, checks that the convoluted signal is normalizated to the initial signal.
+    Check that the function convolve_tof returns an array with the adequate length, and,
+    in case the array is not empty, checks that the convoluted signal is normalizated
+    to the initial signal.
     """
     spe_response, norm = tf.apply_spe_dist(np.unique(np.array(l)), tau_sipm)
     conv_res           = tf.convolve_tof(spe_response, np.array(s))
@@ -61,7 +65,8 @@ spe_resp, norm = tf.apply_spe_dist(time, tau_sipm)
                    ('full_body_1ev.h5')))
 def test_tdc_convolution(ANTEADATADIR, filename):
     """
-    Check that the function tdc_convolution returns a table with the adequate dimensions and in case the tof dataframe is empty, checks that the table only contains zeros.
+    Check that the function tdc_convolution returns a table with the adequate dimensions
+    and in case the tof dataframe is empty, checks that the table only contains zeros.
     """
     PATH_IN        = os.path.join(ANTEADATADIR, filename)
     tof_response   = load_mcTOFsns_response(PATH_IN)
@@ -84,7 +89,9 @@ l2    = st.lists(st.floats(min_value=0, max_value=1000), min_size=2, max_size=10
 @given(e, s_id, l2)
 def test_translate_charge_conv_to_wf_df(e, s_id, l2):
     """
-    Look whether the translate_charge_conv_to_wf_df function returns a dataframe with the same number of rows as the input numpy array and four columns. Three of this columns must contain integers.
+    Look whether the translate_charge_conv_to_wf_df function returns a dataframe
+    with the same number of rows as the input numpy array and four columns.
+    Three of this columns must contain integers.
     """
     l2    = np.array(l2)
     wf_df = tf.translate_charge_conv_to_wf_df(e, s_id, l2)
