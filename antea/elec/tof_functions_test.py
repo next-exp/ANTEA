@@ -112,7 +112,7 @@ def test_first_bin_is_the_same_after_convolution(ANTEADATADIR):
     """
     PATH_IN          = os.path.join(ANTEADATADIR, 'full_body_1ev.h5')
     tof_response     = load_mcTOFsns_response(PATH_IN)
-    evt              = tof_response.event_id .unique() #The datafile contains only 1 event
+    evt              = tof_response.event_id .unique()[0] #The datafile contains only 1 event
     tof_sns          = tof_response.sensor_id.unique()
     for s_id in tof_sns:
         tdc_conv    = tf.tdc_convolution(tof_response, spe_resp, s_id, time_window)
